@@ -23,7 +23,7 @@ __localcode
 *.local
 
 # Arquivos de migrações (opcional, remova se quiser versionar)
-# /migrations/
+/migrations/
 
 # Arquivos estáticos e mídia
 /staticfiles/
