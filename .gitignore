@@ -19,6 +19,7 @@ db.sqlite3
 # Configurações locais sensíveis
 local_settings.py
 settings_local.py
+__localcode
 *.local
 
 # Arquivos de migrações (opcional, remova se quiser versionar)
