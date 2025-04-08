@@ -1,0 +1,39 @@
+version: '3.9'
+
+services:
+  djangoapp:
+    container_name: djangoapp
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./djangoapp:/djangoapp
+      - static_data:/data/web/static
+      - media_data:/data/web/media
+    env_file:
+      - ./dotenv_files/.env
+    depends_on:
+      psql:
+        condition: service_healthy  # Wait for PostgreSQL to be ready
+    command: ["/scripts/commands.sh"]  # Explicitly specify the command
+
+  psql:
+    container_name: psql
+    image: postgres:17-alpine3.21
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    env_file:
+      - ./dotenv_files/.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"  # Expose PostgreSQL port for debugging (optional)
+
+volumes:
+  static_data:
+  media_data:
+  pgdata:
