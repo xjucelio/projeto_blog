@@ -1,4 +1,5 @@
 import os
+from decouple import config
 """
 Django settings for project project.
 
@@ -22,15 +23,13 @@ DATA_DIR = BASE_DIR.parent / 'data' / 'web'
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'change-me')
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(int(os.getenv('DEBUG', 0)))
+DEBUG = config('DEBUG', cast=bool)
 
-ALLOWED_HOSTS = [
-    h.strip() for h in os.getenv('ALLOWED_HOSTS', '').split(',')
-    if h.strip()
-]
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=lambda v: [
+                       s.strip() for s in v.split(',')])
 
 
 # Application definition
@@ -42,8 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Meus apps
     'blog',
     'site_setup',
+    # Summernote
+    'django_summernote',
 ]
 
 MIDDLEWARE = [
@@ -84,12 +86,12 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE', 'change-me'),
-        'NAME': os.getenv('POSTGRES_DB', 'change-me'),
-        'USER': os.getenv('POSTGRES_USER', 'change-me'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'change-me'),
-        'HOST': os.getenv('POSTGRES_HOST', 'change-me'),
-        'PORT': os.getenv('POSTGRES_PORT', 'change-me'),
+        'ENGINE': config('DB_ENGINE'),
+        'NAME': config('POSTGRES_DB'),
+        'USER': config('POSTGRES_USER'),
+        'PASSWORD': config('POSTGRES_PASSWORD'),
+        'HOST': config('POSTGRES_HOST'),
+        'PORT': config('POSTGRES_PORT'),
     }
 }
 
@@ -140,3 +142,30 @@ MEDIA_ROOT = DATA_DIR / 'media'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SUMMERNOTE_CONFIG = {
+    'summernote': {
+        # Toolbar customization
+        # https://summernote.org/deep-dive/#custom-toolbar-popover
+        'toolbar': [
+            ['style', ['style', ]],
+            ['font', ['bold', 'italic', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph', 'hr', ]],
+            ['table', ['table']],
+            ['insert', ['link', 'picture']],
+            ['view', ['fullscreen', 'codeview', 'undo', 'redo']],
+        ],
+        'codemirror': {
+            'mode': 'htmlmixed',
+            'lineNumbers': 'true',
+            'lineWrapping': 'true',
+            'theme': 'dracula',
+        },
+    },
+    'css': (
+        '//cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/dracula.min.css',
+    ),
+    'attachment_filesize_limit': 30 * 1024 * 1024,
+    'attachment_model': 'blog.PostAttachment',
+}

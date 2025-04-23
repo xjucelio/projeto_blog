@@ -1,3 +1,6 @@
-django
+Django
 psycopg2-binary
-pillow
+Pillow
+django-summernote
+python-decouple
+psycopg2
