@@ -4,3 +4,5 @@ Pillow
 django-summernote
 python-decouple
 psycopg2
+python-dotenv==1.1.0
+django-axes==7.0.2
